@@ -72,18 +72,18 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
           avatar_url TEXT
           );`
       );
-    })
-    .then(() => {
-      return db.query(
-        `INSERT INTO topics (description, slug, img_url) 
-        VALUES %L;`,
-        [
-          ["The man, the Mitch, the legend", "mitch", ""],
-          ["Not dogs", "cats", ""],
-          ["what books are made of", "paper", ""],
-        ]
-      );
     });
+  // .then(() => {
+  //   return db.query(
+  //     `INSERT INTO topics (description, slug, img_url)
+  //     VALUES %L;`,
+  //     [
+  //       ["The man, the Mitch, the legend", "mitch", ""],
+  //       ["Not dogs", "cats", ""],
+  //       ["what books are made of", "paper", ""],
+  //     ]
+  //   );
+  // });
 };
 
 module.exports = seed;
