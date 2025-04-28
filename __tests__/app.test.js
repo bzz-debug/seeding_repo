@@ -22,3 +22,38 @@ describe("GET /api", () => {
       });
   });
 });
+
+const topicShape = {
+  slug: expect.any(String),
+  description: expect.any(String),
+};
+
+describe("GET /api/topics", () => {
+  test("200: Responds with an array of topic objects, containing slug and description properties", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.topics.length).toBe(3);
+        expect(
+          body.topics.forEach((topic) => {
+            expect(topic).toMatchObject(topicShape);
+          })
+        );
+      });
+  });
+  test("404: Responds with an error when there are no topics in the database", () => {
+    return db.query(`DELETE FROM comments;`).then(() => {
+      return db.query(`DELETE FROM articles;`).then(() => {
+        return db.query(`DELETE FROM topics;`).then(() => {
+          return request(app)
+            .get("/api/topics")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.message).toBe("No topics here!");
+            });
+        });
+      });
+    });
+  });
+});
