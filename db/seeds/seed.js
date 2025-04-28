@@ -115,11 +115,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         VALUES %L RETURNING *;`,
         formattedArticles
       );
-      console.log(articleInsert);
+
       return db.query(articleInsert);
     })
     .then((result) => {
-      console.log(result.rows);
+     
       articlesRefObject = createRef(result.rows);
       const formattedComments = commentData.map((comment) => {
         const alteredComment = convertTimestampToDate(comment);
@@ -136,7 +136,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         VALUES %L;`,
         formattedComments
       );
-      console.log(commentInsert);
+
       return db.query(commentInsert);
     });
 };

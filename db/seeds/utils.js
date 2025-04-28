@@ -14,6 +14,6 @@ exports.createRef = (articlesData) => {
   articlesData.forEach(
     (article) => (result[article.title] = article.article_id)
   );
-  console.log(result);
+  ;
   return result;
 };

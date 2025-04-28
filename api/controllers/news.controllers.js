@@ -1,10 +1,18 @@
-const {} = require("");
+const { selectTopics } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 
 const getApi = (req, res) => {
-  const endpointsObj = req.body;
-  console.log(endpointsObj);
   res.status(200).send({ endpoints });
 };
 
-module.exports = { getApi };
+const getTopics = (req, res, next) => {
+  return selectTopics()
+    .then((topics) => {
+      res.status(200).send({ topics });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getApi, getTopics };
