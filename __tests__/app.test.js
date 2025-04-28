@@ -28,6 +28,18 @@ const topicShape = {
   description: expect.any(String),
 };
 
+const articleShape = {
+  author: expect.any(String),
+  title: expect.any(String),
+  article_id: expect.any(Number),
+  body: expect.any(String),
+  topic: expect.any(String),
+  created_at: expect.any(String),
+  author: expect.any(String),
+  votes: expect.any(Number),
+  article_img_url: expect.any(String),
+};
+
 describe("GET /api/topics", () => {
   test("200: Responds with an array of topic objects, containing slug and description properties", () => {
     return request(app)
@@ -55,5 +67,32 @@ describe("GET /api/topics", () => {
         });
       });
     });
+  });
+});
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with an article object", () => {
+    return request(app)
+      .get("/api/articles/4")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.article).toMatchObject(articleShape);
+        expect;
+      });
+  });
+  test("404: Responds with an error when the ID does not match any in the database", () => {
+    return request(app)
+      .get("/api/articles/505")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.message).toBe("No article with ID: 505 found!");
+      });
+  });
+  test("400: Responds with a bad request error when the user assigns a non-number to the id", () => {
+    return request(app)
+      .get("/api/articles/pizza")
+      .expect(400)
+      .then((result) => {
+        expect(result.body.message).toBe("bad request");
+      });
   });
 });
