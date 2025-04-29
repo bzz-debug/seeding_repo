@@ -6,11 +6,14 @@ const {
   getApi,
   getTopics,
   getArticles,
+  getAllArticles,
 } = require("./api/controllers/news.controllers");
 
 app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticles);
 
