@@ -9,7 +9,7 @@ const selectTopics = () => {
   });
 };
 
-const selectArticles = (article_id) => {
+const selectArticlesById = (article_id) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then((result) => {
@@ -50,4 +50,28 @@ ORDER BY created_at DESC
     });
 };
 
-module.exports = { selectTopics, selectArticles, selectAllArticles };
+const selectCommentsByArticleId = (article_id) => {
+  return db
+    .query(
+      `SELECT comments.*, articles.article_id FROM comments LEFT JOIN articles ON comments.article_id = articles.article_id WHERE comments.article_id = $1
+      ORDER BY created_at DESC`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "No comments found",
+        });
+      }
+
+      return rows;
+    });
+};
+
+module.exports = {
+  selectTopics,
+  selectArticlesById,
+  selectAllArticles,
+  selectCommentsByArticleId,
+};

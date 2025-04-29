@@ -1,7 +1,8 @@
 const {
   selectTopics,
-  selectArticles,
+  selectArticlesById,
   selectAllArticles,
+  selectCommentsByArticleId,
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 
@@ -19,9 +20,9 @@ const getTopics = (req, res, next) => {
     });
 };
 
-const getArticles = (req, res, next) => {
+const getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
-  return selectArticles(article_id)
+  return selectArticlesById(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
@@ -36,9 +37,25 @@ const getAllArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
-      console.log("in the controller");
       next(err);
     });
 };
 
-module.exports = { getApi, getTopics, getArticles, getAllArticles };
+const getCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  return selectCommentsByArticleId(article_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = {
+  getApi,
+  getTopics,
+  getArticlesById,
+  getAllArticles,
+  getCommentsByArticleId,
+};
