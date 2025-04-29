@@ -37,7 +37,10 @@ ORDER BY created_at DESC
     )
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, message: "No articles found!" });
+        return Promise.reject({
+          status: 404,
+          message: "No articles found!",
+        });
       }
       result.rows.forEach((article) => {
         article.comment_count = Number(article.comment_count);
