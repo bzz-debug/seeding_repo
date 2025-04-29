@@ -5,8 +5,9 @@ const db = require("./db/connection");
 const {
   getApi,
   getTopics,
-  getArticles,
+  getArticlesById,
   getAllArticles,
+  getCommentsByArticleId,
 } = require("./api/controllers/news.controllers");
 
 app.get("/api", getApi);
@@ -15,11 +16,11 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getAllArticles);
 
-app.get("/api/articles/:article_id", getArticles);
+app.get("/api/articles/:article_id", getArticlesById);
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.use((err, req, res, next) => {
-  console.log(err);
-
   if (err.status && err.message) {
     res.status(err.status).send({ message: err.message });
   } else next(err);

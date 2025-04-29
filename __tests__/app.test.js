@@ -111,7 +111,7 @@ describe("GET: api/articles", () => {
     comment_count: expect.any(Number),
   };
 
-  test("200: responds with an array of article objects, with body removed and a comment count added", () => {
+  test("200: responds with an array of article objects, with body removed and a comment count added, sorted by descending date", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -135,6 +135,50 @@ describe("GET: api/articles", () => {
           .then(({ body }) => {
             expect(body.message).toBe("No articles found!");
           });
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  const commentShape = {
+    comment_id: expect.any(Number),
+    votes: expect.any(Number),
+    created_at: expect.any(String),
+    author: expect.any(String),
+    body: expect.any(String),
+    article_id: expect.any(Number),
+  };
+
+  test("200: Returns an array of comments including the required properties", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0]).toMatchObject(commentShape);
+      });
+  });
+  test("array is sorted by date descending", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("404: Responds with an error when no comments found at stipulated ID", () => {
+    return request(app)
+      .get("/api/articles/30/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("No comments found");
+      });
+  });
+
+  test("400: Responds with a bad request error when  the user assigns a non-number to the id", () => {
+    return request(app)
+      .get("/api/articles/blahblahblah/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
       });
   });
 });
