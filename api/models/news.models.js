@@ -69,9 +69,25 @@ const selectCommentsByArticleId = (article_id) => {
     });
 };
 
+const insertNewComment = (newComment, article_id) => {
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING author, body`,
+      [article_id, newComment.username, newComment.body]
+    )
+    .then(({ rows }) => {
+      console.log(rows);
+      rows[0].username = rows[0].author;
+      delete rows[0].author;
+      console.log(rows[0]);
+      return rows[0];
+    });
+};
+
 module.exports = {
   selectTopics,
   selectArticlesById,
   selectAllArticles,
   selectCommentsByArticleId,
+  insertNewComment,
 };
