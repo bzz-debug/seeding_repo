@@ -9,6 +9,7 @@ const {
   getAllArticles,
   getCommentsByArticleId,
   postNewComment,
+  patchArticleVotes,
 } = require("./api/controllers/news.controllers");
 
 app.use(express.json());
@@ -24,6 +25,8 @@ app.get("/api/articles/:article_id", getArticlesById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postNewComment);
+
+app.patch("/api/articles/:article_id", patchArticleVotes);
 
 app.use((err, req, res, next) => {
   if (err.status && err.message) {

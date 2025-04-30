@@ -237,3 +237,64 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Returns the updated article with new amount of votes", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: 17 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle).toMatchObject({
+          article_id: 3,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 17,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("400: Returns an error when passed an invalid data type for the votes", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: "dum dum" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("400: Returns an error when passed an empty object", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404: Returns an error when passed a valid but non-existent id", () => {
+    return request(app)
+      .patch("/api/articles/300")
+      .send({ inc_votes: 17 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("No articles found");
+      });
+  });
+  test("400: Returns an error when passed an invalid  id", () => {
+    return request(app)
+      .patch("/api/articles/potatoes")
+      .send({ inc_votes: 17 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Deletes the comment at the given id ", () => {});
+  //404: no comment found at given id
+  //400: given id invalid
+});
