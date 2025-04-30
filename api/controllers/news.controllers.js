@@ -101,7 +101,7 @@ const postNewComment = (req, res, next) => {
 const patchArticleVotes = (req, res, next) => {
   const { inc_votes } = req.body;
   const { article_id } = req.params;
-  console.log(inc_votes, article_id);
+
 
   if (!inc_votes) {
     return Promise.reject({
@@ -120,7 +120,7 @@ const patchArticleVotes = (req, res, next) => {
       res.status(200).send({ updatedArticle });
     })
     .catch((err) => {
-      console.log(err);
+     
       next(err);
     });
 };

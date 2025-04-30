@@ -98,7 +98,7 @@ const updateArticleVotes = (inc_votes, article_id) => {
           message: "No articles found",
         });
       }
-      console.log(rows[0]);
+
       return rows[0];
     });
 };
