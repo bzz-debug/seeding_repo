@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertNewComment,
+  updateArticleVotes,
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 const db = require("../../db/connection");
@@ -97,6 +98,33 @@ const postNewComment = (req, res, next) => {
   });
 };
 
+const patchArticleVotes = (req, res, next) => {
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+  console.log(inc_votes, article_id);
+
+  if (!inc_votes) {
+    return Promise.reject({
+      status: 400,
+      message: "bad request",
+    });
+  }
+  if (isNaN(article_id)) {
+    return Promise.reject({
+      status: 400,
+      message: "bad request",
+    });
+  }
+  updateArticleVotes(inc_votes, article_id)
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
 module.exports = {
   getApi,
   getTopics,
@@ -104,4 +132,5 @@ module.exports = {
   getAllArticles,
   getCommentsByArticleId,
   postNewComment,
+  patchArticleVotes,
 };
