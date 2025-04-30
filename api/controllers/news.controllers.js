@@ -76,25 +76,6 @@ const postNewComment = (req, res, next) => {
     });
   };
 
-  // const findValidId = (articleId) => {
-  //   return db
-  //     .query(`SELECT article_id FROM articles`)
-  //     .then(({ rows }) => {
-  //       console.log(rows);
-
-  //       const articleIdArray = rows.map((id) => Object.values(id));
-
-  //       if (articleIdArray.flat().includes(Number(articleId))) {
-  //         return true;
-  //       }
-  //       return false;
-  //     })
-  //     .catch((err) => {
-
-  //       next(err);
-  //     });
-  // };
-
   return findValidUser(newComment).then((validUser) => {
     if (!validUser) {
       next({

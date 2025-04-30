@@ -76,10 +76,9 @@ const insertNewComment = (newComment, article_id) => {
       [article_id, newComment.username, newComment.body]
     )
     .then(({ rows }) => {
-      console.log(rows);
       rows[0].username = rows[0].author;
       delete rows[0].author;
-      console.log(rows[0]);
+
       return rows[0];
     });
 };

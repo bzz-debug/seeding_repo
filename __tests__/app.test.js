@@ -236,6 +236,4 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.message).toBe("No article with ID: 99999 found!");
       });
   });
-  //catch & new error handler in app.js for another sql code??
-  test.todo("update endpoints.json");
 });
