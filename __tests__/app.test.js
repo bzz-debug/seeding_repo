@@ -182,3 +182,58 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the posted comment", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        body: "shoobydowop",
+        username: "butter_bridge",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.postedComment).toEqual({
+          username: "butter_bridge",
+          body: "shoobydowop",
+        });
+      });
+  });
+
+  test("400: Responds with a bad request error when an invalid username is provided & no comment", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        body: "who am i",
+        username: "butter_bridge2",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("invalid username");
+      });
+  });
+  test("400: invalid article ID", () => {
+    return request(app)
+      .post("/api/articles/string/comments")
+      .send({
+        body: "who am i",
+        username: "butter_bridge",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404: nonexistent article ID", () => {
+    return request(app)
+      .post("/api/articles/99999/comments")
+      .send({
+        body: "who am i",
+        username: "butter_bridge",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("No article with ID: 99999 found!");
+      });
+  });
+});

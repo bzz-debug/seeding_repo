@@ -62,5 +62,16 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Posts a new comment to the endpoint, based on the article_id passed to it",
+    "exampleResponse": {
+      "comment": [
+        {
+          "body": "who am i",
+          "username": "butter_bridge"
+        }
+      ]
+    }
   }
 }

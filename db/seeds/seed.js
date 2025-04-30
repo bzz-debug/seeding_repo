@@ -119,7 +119,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(articleInsert);
     })
     .then((result) => {
-     
       articlesRefObject = createRef(result.rows);
       const formattedComments = commentData.map((comment) => {
         const alteredComment = convertTimestampToDate(comment);
