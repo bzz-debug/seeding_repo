@@ -137,7 +137,46 @@ describe("GET: api/articles", () => {
           });
       });
   });
+  describe("GET /api/articles (sorting queries)", () => {
+    test("200: Responds with all articles sorted by the specified property, defaulting to created_at", () => {
+      return request(app)
+        .get("/api/articles?sort_by=topic")
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+
+          expect(body.articles).toBeSortedBy("topic", { descending: true });
+        });
+    });
+    test("200: Responds with all articles ordered by the specified property, defaulting to descending", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: false,
+          });
+        });
+    });
+    test("400: Responds with a bad request error when an invalid sort_by instruction is given", () => {
+      return request(app)
+        .get("/api/articles?sort_by=jalepeno")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("invalid sort_by request");
+        });
+    });
+    test("400: Responds with a bad request error when an invalid order_by instruction is given", () => {
+      return request(app)
+        .get("/api/articles?order=sideways")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("invalid order request");
+        });
+    });
+  });
 });
+
 describe("GET /api/articles/:article_id/comments", () => {
   const commentShape = {
     comment_id: expect.any(Number),
