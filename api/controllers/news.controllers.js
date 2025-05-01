@@ -5,6 +5,7 @@ const {
   selectCommentsByArticleId,
   insertNewComment,
   updateArticleVotes,
+  deleteCommentById,
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 const db = require("../../db/connection");
@@ -102,7 +103,6 @@ const patchArticleVotes = (req, res, next) => {
   const { inc_votes } = req.body;
   const { article_id } = req.params;
 
-
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
@@ -120,7 +120,27 @@ const patchArticleVotes = (req, res, next) => {
       res.status(200).send({ updatedArticle });
     })
     .catch((err) => {
-     
+      next(err);
+    });
+};
+
+const removeCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  deleteCommentById(comment_id)
+    .then((deleteStatus) => {
+      if (isNaN(comment_id)) {
+        return Promise.reject({
+          status: 400,
+          message: "bad request",
+        });
+      }
+
+      if (deleteStatus.success === true) {
+        res.status(204).send();
+      }
+    })
+    .catch((err) => {
       next(err);
     });
 };
@@ -133,4 +153,5 @@ module.exports = {
   getCommentsByArticleId,
   postNewComment,
   patchArticleVotes,
+  removeCommentById,
 };
