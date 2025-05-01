@@ -314,4 +314,43 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
-
+describe("GET /api/users", () => {
+  test("200: Responds with an array of topic objects, containing slug and description properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        expect(
+          body.users.forEach((topic) => {
+            expect(topic).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          })
+        );
+      });
+  });
+  test("404: Responds with an error when there are no users in the database", () => {
+    return db
+      .query(`DELETE FROM comments;`)
+      .then(() => {
+        return db.query(`DELETE FROM articles;`);
+      })
+      .then(() => {
+        return db.query(`DELETE FROM topics;`);
+      })
+      .then(() => {
+        return db.query(`DELETE FROM users;`);
+      })
+      .then(() => {
+        return request(app)
+          .get("/api/users")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.message).toBe("No users here!");
+          });
+      });
+  });
+});

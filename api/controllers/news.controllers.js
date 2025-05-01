@@ -6,6 +6,7 @@ const {
   insertNewComment,
   updateArticleVotes,
   deleteCommentById,
+  selectUsers,
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 const db = require("../../db/connection");
@@ -145,6 +146,16 @@ const removeCommentById = (req, res, next) => {
     });
 };
 
+const getUsers = (req, res, next) => {
+  return selectUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getApi,
   getTopics,
@@ -154,4 +165,5 @@ module.exports = {
   postNewComment,
   patchArticleVotes,
   removeCommentById,
+  getUsers,
 };

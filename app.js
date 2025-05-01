@@ -11,6 +11,7 @@ const {
   postNewComment,
   patchArticleVotes,
   removeCommentById,
+  getUsers,
 } = require("./api/controllers/news.controllers");
 
 app.use(express.json());
@@ -24,6 +25,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.get("/api/users", getUsers);
 
 app.post("/api/articles/:article_id/comments", postNewComment);
 

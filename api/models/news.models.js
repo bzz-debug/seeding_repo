@@ -119,6 +119,17 @@ const deleteCommentById = (comment_id) => {
     });
 };
 
+const selectUsers = () => {
+  return db
+    .query(`SELECT username, name, avatar_url FROM users`)
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, message: "No users here!" });
+      }
+      return result.rows;
+    });
+};
+
 module.exports = {
   selectTopics,
   selectArticlesById,
@@ -127,4 +138,5 @@ module.exports = {
   insertNewComment,
   updateArticleVotes,
   deleteCommentById,
+  selectUsers,
 };
