@@ -294,7 +294,24 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 describe("DELETE /api/comments/:comment_id", () => {
-  test("204: Deletes the comment at the given id ", () => {});
-  //404: no comment found at given id
-  //400: given id invalid
+  test("204: Deletes the comment at the given id ", () => {
+    return request(app).delete("/api/comments/5").expect(204);
+  });
+  test("400: Returns an error when the given id is not a number", () => {
+    return request(app)
+      .delete("/api/comments/hi")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("bad request");
+      });
+  });
+  test("404: Returns an error when there is no comment at the given id ", () => {
+    return request(app)
+      .delete("/api/comments/900")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("no comment found");
+      });
+  });
 });
+
