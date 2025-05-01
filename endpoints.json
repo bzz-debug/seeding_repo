@@ -79,5 +79,20 @@
     "exampleResponse": {
       "status": 204
     }
+  },
+  "GET /api/articles (sorting queries)": {
+    "description": "serves an array of all articles, sorted by the specified query input, and ordered by the instructed input",
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
+        }
+      ]
+    }
   }
 }

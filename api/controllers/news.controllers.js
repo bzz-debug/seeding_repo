@@ -10,6 +10,7 @@ const {
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 const db = require("../../db/connection");
+const { sort } = require("../../db/data/test-data/articles");
 
 const getApi = (req, res) => {
   res.status(200).send({ endpoints });
@@ -37,13 +38,40 @@ const getArticlesById = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-  return selectAllArticles()
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch((err) => {
-      next(err);
+  const sortBy = req.query.sort_by || "created_at";
+  const orderBy = (req.query.order || "desc").toUpperCase();
+
+  const validSortBy = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+  ].includes(sortBy);
+
+  const validOrderBy = ["ASC", "DESC"].includes(orderBy);
+
+  if (validSortBy && validOrderBy) {
+    return selectAllArticles(sortBy, orderBy)
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else if (!validOrderBy && validSortBy) {
+    return Promise.reject({
+      status: 400,
+      message: "invalid order request",
     });
+  } else {
+    return Promise.reject({
+      status: 400,
+      message: "invalid sort_by request",
+    });
+  }
 };
 
 const getCommentsByArticleId = (req, res, next) => {
