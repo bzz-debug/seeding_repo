@@ -7,6 +7,7 @@ const {
   updateArticleVotes,
   deleteCommentById,
   selectUsers,
+  selectArticlesByTopic,
 } = require("../models/news.models");
 const endpoints = require("../../endpoints.json");
 const db = require("../../db/connection");
@@ -41,6 +42,30 @@ const getAllArticles = (req, res, next) => {
   const sortBy = req.query.sort_by || "created_at";
   const orderBy = (req.query.order || "desc").toUpperCase();
 
+  const topic = req.query.topic;
+  console.log(topic);
+
+  const validTopic = ["cats", "mitch", "paper"].includes(topic);
+
+  if (validTopic) {
+    selectArticlesByTopic(topic)
+      .then((filteredArticles) => {
+        res.status(200).send({ filteredArticles });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else if (topic && !validTopic) {
+    return Promise.reject({
+      status: 400,
+      message: "bad request - invalid topic",
+    });
+  }
+
+  // const validTopic = ["mitch", "cats", "paper"].includes(topicFilter);
+
+  // console.log(validTopic);
+
   const validSortBy = [
     "article_id",
     "title",
@@ -52,6 +77,10 @@ const getAllArticles = (req, res, next) => {
   ].includes(sortBy);
 
   const validOrderBy = ["ASC", "DESC"].includes(orderBy);
+
+  // if (topicFilter && validTopic) {
+  //   // maybe make a new query for when there is a topic filter, so I dont have to integrate it into here
+  // }
 
   if (validSortBy && validOrderBy) {
     return selectAllArticles(sortBy, orderBy)
