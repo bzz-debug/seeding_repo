@@ -28,14 +28,16 @@ const selectAllArticles = (sortBy, order) => {
     .query(
       `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id) AS comment_count
-    FROM articles
+    FROM articles 
     LEFT JOIN comments
     ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
-ORDER BY ${sortBy} ${order}
-    `
+    ORDER BY ${sortBy} ${order}
+      `
     )
     .then((result) => {
+      console.log(result.rows);
+
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
@@ -45,6 +47,29 @@ ORDER BY ${sortBy} ${order}
       result.rows.forEach((article) => {
         article.comment_count = Number(article.comment_count);
       });
+
+      return result.rows;
+    });
+};
+
+const selectArticlesByTopic = (topic) => {
+  const replacement = "$1";
+  return db
+    .query(
+      `SELECT * FROM articles 
+    WHERE articles.topic = ${replacement}  
+      `,
+      [topic]
+    )
+    .then((result) => {
+      console.log(result.rows);
+
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "No articles found!",
+        });
+      }
 
       return result.rows;
     });
@@ -139,4 +164,5 @@ module.exports = {
   updateArticleVotes,
   deleteCommentById,
   selectUsers,
+  selectArticlesByTopic,
 };
