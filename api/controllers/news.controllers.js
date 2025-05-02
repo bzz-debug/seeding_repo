@@ -43,7 +43,6 @@ const getAllArticles = (req, res, next) => {
   const orderBy = (req.query.order || "desc").toUpperCase();
 
   const topic = req.query.topic;
-  console.log(topic);
 
   const validTopic = ["cats", "mitch", "paper"].includes(topic);
 
@@ -62,10 +61,6 @@ const getAllArticles = (req, res, next) => {
     });
   }
 
-  // const validTopic = ["mitch", "cats", "paper"].includes(topicFilter);
-
-  // console.log(validTopic);
-
   const validSortBy = [
     "article_id",
     "title",
@@ -77,10 +72,6 @@ const getAllArticles = (req, res, next) => {
   ].includes(sortBy);
 
   const validOrderBy = ["ASC", "DESC"].includes(orderBy);
-
-  // if (topicFilter && validTopic) {
-  //   // maybe make a new query for when there is a topic filter, so I dont have to integrate it into here
-  // }
 
   if (validSortBy && validOrderBy) {
     return selectAllArticles(sortBy, orderBy)
