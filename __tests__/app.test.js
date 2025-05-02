@@ -72,12 +72,27 @@ describe("GET /api/articles/:article_id", () => {
     article_img_url: expect.any(String),
   };
 
+  const newArticleShape = {
+    author: expect.any(String),
+    title: expect.any(String),
+    article_id: expect.any(Number),
+    topic: expect.any(String),
+    created_at: expect.any(String),
+    author: expect.any(String),
+    votes: expect.any(Number),
+    article_img_url: expect.any(String),
+    comment_count: expect.any(Number),
+  };
+
   test("200: Responds with an article object", () => {
     return request(app)
       .get("/api/articles/4")
       .expect(200)
       .then((result) => {
-        expect(result.body.article).toMatchObject(articleShape);
+        expect({
+          comment_count: 0,
+          ...result.body.article,
+        }).toMatchObject(newArticleShape);
         expect;
       });
   });
@@ -95,6 +110,14 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then((result) => {
         expect(result.body.message).toBe("bad request");
+      });
+  });
+  test("now returns an object containing comment_count", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject(newArticleShape);
       });
   });
 });
