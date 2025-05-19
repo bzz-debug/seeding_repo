@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const db = require("./db/connection");
+const cors = require("cors");
 
 const {
   getApi,
@@ -13,6 +14,8 @@ const {
   removeCommentById,
   getUsers,
 } = require("./api/controllers/news.controllers");
+
+app.use(cors());
 
 app.use(express.json());
 
