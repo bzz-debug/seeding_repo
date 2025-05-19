@@ -108,6 +108,7 @@ const getCommentsByArticleId = (req, res, next) => {
 const postNewComment = (req, res, next) => {
   const { article_id } = req.params;
   const newComment = req.body;
+  console.log(newComment);
 
   if (isNaN(article_id)) {
     return Promise.reject({
