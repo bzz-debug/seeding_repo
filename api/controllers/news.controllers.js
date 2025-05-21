@@ -44,7 +44,7 @@ const getAllArticles = (req, res, next) => {
 
   const topic = req.query.topic;
 
-  const validTopic = ["cats", "mitch", "paper"].includes(topic);
+  const validTopic = ["cooking", "coding", "football"].includes(topic);
 
   if (validTopic) {
     selectArticlesByTopic(topic)
