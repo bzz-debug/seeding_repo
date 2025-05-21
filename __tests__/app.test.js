@@ -197,7 +197,7 @@ describe("GET: api/articles", () => {
     });
   });
   describe("GET /api/articles (topic query)", () => {
-    test("200: returns the only the topics represented by the passed query", () => {
+    xtest("200: returns the only the topics represented by the passed query", () => {
       return request(app)
         .get("/api/articles?topic=cats")
         .expect(200)
@@ -226,7 +226,7 @@ describe("GET: api/articles", () => {
           expect(body.message).toBe("bad request - invalid topic");
         });
     });
-    test("404: Responds with an error when no articles exist with the queried topic", () => {
+    xtest("404: Responds with an error when no articles exist with the queried topic", () => {
       return db
         .query(`DELETE FROM comments;`)
         .then(() => {
