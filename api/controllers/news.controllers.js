@@ -8,10 +8,10 @@ const {
   deleteCommentById,
   selectUsers,
   selectArticlesByTopic,
-} = require("../models/news.models");
-const endpoints = require("../../endpoints.json");
-const db = require("../../db/connection");
-const { sort } = require("../../db/data/test-data/articles");
+} = require('../models/news.models');
+const endpoints = require('../../endpoints.json');
+const db = require('../../db/connection');
+const { sort } = require('../../db/data/test-data/articles');
 
 const getApi = (req, res) => {
   res.status(200).send({ endpoints });
@@ -39,12 +39,12 @@ const getArticlesById = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-  const sortBy = req.query.sort_by || "created_at";
-  const orderBy = (req.query.order || "desc").toUpperCase();
+  const sortBy = req.query.sort_by || 'created_at';
+  const orderBy = (req.query.order || 'desc').toUpperCase();
 
   const topic = req.query.topic;
 
-  const validTopic = ["cooking", "coding", "football"].includes(topic);
+  const validTopic = ['cooking', 'coding', 'football'].includes(topic);
 
   if (validTopic) {
     selectArticlesByTopic(topic)
@@ -57,21 +57,21 @@ const getAllArticles = (req, res, next) => {
   } else if (topic && !validTopic) {
     return Promise.reject({
       status: 400,
-      message: "bad request - invalid topic",
+      message: 'bad request - invalid topic',
     });
   }
 
   const validSortBy = [
-    "article_id",
-    "title",
-    "topic",
-    "author",
-    "body",
-    "created_at",
-    "votes",
+    'article_id',
+    'title',
+    'topic',
+    'author',
+    'body',
+    'created_at',
+    'votes',
   ].includes(sortBy);
 
-  const validOrderBy = ["ASC", "DESC"].includes(orderBy);
+  const validOrderBy = ['ASC', 'DESC'].includes(orderBy);
 
   if (validSortBy && validOrderBy) {
     return selectAllArticles(sortBy, orderBy)
@@ -84,12 +84,12 @@ const getAllArticles = (req, res, next) => {
   } else if (!validOrderBy && validSortBy) {
     return Promise.reject({
       status: 400,
-      message: "invalid order request",
+      message: 'invalid order request',
     });
   } else {
     return Promise.reject({
       status: 400,
-      message: "invalid sort_by request",
+      message: 'invalid sort_by request',
     });
   }
 };
@@ -113,7 +113,7 @@ const postNewComment = (req, res, next) => {
   if (isNaN(article_id)) {
     return Promise.reject({
       status: 400,
-      message: "bad request",
+      message: 'bad request',
     });
   }
 
@@ -132,7 +132,7 @@ const postNewComment = (req, res, next) => {
     if (!validUser) {
       next({
         status: 400,
-        message: "invalid username",
+        message: 'invalid username',
       });
     } else {
       return selectArticlesById(article_id)
@@ -156,13 +156,13 @@ const patchArticleVotes = (req, res, next) => {
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
-      message: "bad request",
+      message: 'bad request',
     });
   }
   if (isNaN(article_id)) {
     return Promise.reject({
       status: 400,
-      message: "bad request",
+      message: 'bad request',
     });
   }
   updateArticleVotes(inc_votes, article_id)
@@ -182,7 +182,7 @@ const removeCommentById = (req, res, next) => {
       if (isNaN(comment_id)) {
         return Promise.reject({
           status: 400,
-          message: "bad request",
+          message: 'bad request',
         });
       }
 
