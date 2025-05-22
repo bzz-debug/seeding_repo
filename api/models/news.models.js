@@ -1,9 +1,9 @@
-const db = require("../../db/connection");
+const db = require('../../db/connection');
 
 const selectTopics = () => {
   return db.query(`SELECT slug, description FROM topics`).then((result) => {
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, message: "No topics here!" });
+      return Promise.reject({ status: 404, message: 'No topics here!' });
     }
     return result.rows;
   });
@@ -12,7 +12,7 @@ const selectTopics = () => {
 const selectArticlesById = (article_id) => {
   return db
     .query(
-      `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.body, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`,
+      `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.body, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`,
       [article_id]
     )
     .then((result) => {
@@ -22,59 +22,54 @@ const selectArticlesById = (article_id) => {
           message: `No article with ID: ${article_id} found!`,
         });
       }
-      result.rows.forEach((article) => {
-        article.comment_count = Number(article.comment_count);
-      });
+
       return result.rows[0];
     });
 };
 
-const selectAllArticles = (sortBy, order) => {
-  return db
-    .query(
-      `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
-    COUNT(comments.comment_id) AS comment_count
+const selectAllArticles = (sortBy, orderBy, topic) => {
+  const validSortBy = [
+    'article_id',
+    'title',
+    'topic',
+    'author',
+    'body',
+    'created_at',
+    'votes',
+  ].includes(sortBy);
+
+  const validOrderBy = ['ASC', 'DESC'].includes(orderBy);
+
+  if (!validSortBy || !validOrderBy) {
+    return Promise.reject({
+      status: 400,
+      message: 'Bad request',
+    });
+  }
+
+  const queryValues = [];
+  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
+    COUNT(comments.comment_id)::INT AS comment_count
     FROM articles 
     LEFT JOIN comments
-    ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY ${sortBy} ${order}
-      `
-    )
-    .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          message: "No articles found!",
-        });
-      }
-      result.rows.forEach((article) => {
-        article.comment_count = Number(article.comment_count);
+    ON articles.article_id = comments.article_id`;
+  if (topic) {
+    sqlString += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+  }
+  sqlString += ` GROUP BY articles.article_id
+    ORDER BY ${sortBy} ${orderBy}`;
+
+  return db.query(sqlString, queryValues).then((result) => {
+    if (topic && !result.rows.length) {
+      return Promise.reject({
+        status: 404,
+        message: "topic doesn't exist",
       });
+    }
 
-      return result.rows;
-    });
-};
-
-const selectArticlesByTopic = (topic) => {
-  const replacement = "$1";
-  return db
-    .query(
-      `SELECT * FROM articles 
-    WHERE articles.topic = ${replacement}  
-      `,
-      [topic]
-    )
-    .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          message: "No articles found!",
-        });
-      }
-
-      return result.rows;
-    });
+    return result.rows;
+  });
 };
 
 const selectCommentsByArticleId = (article_id) => {
@@ -88,7 +83,7 @@ const selectCommentsByArticleId = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({
           status: 404,
-          message: "No comments found",
+          message: 'No comments found',
         });
       }
 
@@ -122,7 +117,7 @@ const updateArticleVotes = (inc_votes, article_id) => {
       if (rows.length === 0) {
         return Promise.reject({
           status: 404,
-          message: "No articles found",
+          message: 'No articles found',
         });
       }
 
@@ -137,11 +132,11 @@ const deleteCommentById = (comment_id) => {
     ])
     .then(({ rows }) => {
       if (rows.length > 0) {
-        return { success: true, message: "comment deleted" };
+        return { success: true, message: 'comment deleted' };
       } else
         return Promise.reject({
           status: 404,
-          message: "no comment found",
+          message: 'no comment found',
         });
     });
 };
@@ -151,7 +146,7 @@ const selectUsers = () => {
     .query(`SELECT username, name, avatar_url FROM users`)
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, message: "No users here!" });
+        return Promise.reject({ status: 404, message: 'No users here!' });
       }
       return result.rows;
     });
@@ -166,5 +161,4 @@ module.exports = {
   updateArticleVotes,
   deleteCommentById,
   selectUsers,
-  selectArticlesByTopic,
 };

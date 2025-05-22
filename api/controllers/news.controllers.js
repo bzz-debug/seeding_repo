@@ -7,7 +7,6 @@ const {
   updateArticleVotes,
   deleteCommentById,
   selectUsers,
-  selectArticlesByTopic,
 } = require('../models/news.models');
 const endpoints = require('../../endpoints.json');
 const db = require('../../db/connection');
@@ -44,54 +43,14 @@ const getAllArticles = (req, res, next) => {
 
   const topic = req.query.topic;
 
-  const validTopic = ['cooking', 'coding', 'football'].includes(topic);
-
-  if (validTopic) {
-    selectArticlesByTopic(topic)
-      .then((filteredArticles) => {
-        res.status(200).send({ filteredArticles });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else if (topic && !validTopic) {
-    return Promise.reject({
-      status: 400,
-      message: 'bad request - invalid topic',
+  selectAllArticles(sortBy, orderBy, topic)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
     });
-  }
-
-  const validSortBy = [
-    'article_id',
-    'title',
-    'topic',
-    'author',
-    'body',
-    'created_at',
-    'votes',
-  ].includes(sortBy);
-
-  const validOrderBy = ['ASC', 'DESC'].includes(orderBy);
-
-  if (validSortBy && validOrderBy) {
-    return selectAllArticles(sortBy, orderBy)
-      .then((articles) => {
-        res.status(200).send({ articles });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else if (!validOrderBy && validSortBy) {
-    return Promise.reject({
-      status: 400,
-      message: 'invalid order request',
-    });
-  } else {
-    return Promise.reject({
-      status: 400,
-      message: 'invalid sort_by request',
-    });
-  }
 };
 
 const getCommentsByArticleId = (req, res, next) => {
