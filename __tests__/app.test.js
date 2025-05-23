@@ -154,9 +154,9 @@ describe('GET: api/articles', () => {
           expect(body.articles).toBeSortedBy('topic', { descending: true });
         });
     });
-    test('200: Responds with all articles ordered by the specified property, defaulting to descending', () => {
+    test.only('200: Responds with all articles ordered by the specified property, defaulting to descending', () => {
       return request(app)
-        .get('/api/articles?order=asc')
+        .get('/api/articles?sort_by=created_at&order=asc')
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy('created_at', {

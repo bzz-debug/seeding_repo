@@ -69,6 +69,13 @@ const postNewComment = (req, res, next) => {
   const newComment = req.body;
   console.log(newComment);
 
+  if (!newComment) {
+    return Promise.reject({
+      status: 400,
+      message: 'please write a comment',
+    });
+  }
+
   if (isNaN(article_id)) {
     return Promise.reject({
       status: 400,
