@@ -36,6 +36,7 @@ const selectAllArticles = (sortBy, orderBy, topic) => {
     'body',
     'created_at',
     'votes',
+    'comment_count',
   ].includes(sortBy);
 
   const validOrderBy = ['ASC', 'DESC'].includes(orderBy);
