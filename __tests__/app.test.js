@@ -154,7 +154,7 @@ describe('GET: api/articles', () => {
           expect(body.articles).toBeSortedBy('topic', { descending: true });
         });
     });
-    test.only('200: Responds with all articles ordered by the specified property, defaulting to descending', () => {
+    test('200: Responds with all articles ordered by the specified property, defaulting to descending', () => {
       return request(app)
         .get('/api/articles?sort_by=created_at&order=asc')
         .expect(200)
@@ -282,12 +282,24 @@ describe('POST /api/articles/:article_id/comments', () => {
     return request(app)
       .post('/api/articles/3/comments')
       .send({
-        body: 'who am i',
+        body: 'blah blah',
         username: 'butter_bridge2',
       })
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toBe('invalid username');
+      });
+  });
+  test('400: Responds with a bad request error when a valid username is provided & no comment', () => {
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send({
+        body: '',
+        username: 'butter_bridge',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe('please write a comment');
       });
   });
   test('400: invalid article ID', () => {

@@ -69,7 +69,7 @@ const postNewComment = (req, res, next) => {
   const newComment = req.body;
   console.log(newComment);
 
-  if (!newComment) {
+  if (!newComment.body) {
     return Promise.reject({
       status: 400,
       message: 'please write a comment',
@@ -95,6 +95,8 @@ const postNewComment = (req, res, next) => {
   };
 
   return findValidUser(newComment).then((validUser) => {
+    console.log(validUser);
+
     if (!validUser) {
       next({
         status: 400,
